@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8" />
@@ -318,30 +318,14 @@
         }
 
         /* 数字颜色 */
-        .cell.n1 {
-            color: #6cb4ee;
-        }
-        .cell.n2 {
-            color: #6fcf97;
-        }
-        .cell.n3 {
-            color: #f28b8b;
-        }
-        .cell.n4 {
-            color: #bb8fce;
-        }
-        .cell.n5 {
-            color: #f7b773;
-        }
-        .cell.n6 {
-            color: #7ec8e3;
-        }
-        .cell.n7 {
-            color: #b0a8b0;
-        }
-        .cell.n8 {
-            color: #a8b0b0;
-        }
+        .cell.n1 { color: #6cb4ee; }
+        .cell.n2 { color: #6fcf97; }
+        .cell.n3 { color: #f28b8b; }
+        .cell.n4 { color: #bb8fce; }
+        .cell.n5 { color: #f7b773; }
+        .cell.n6 { color: #7ec8e3; }
+        .cell.n7 { color: #b0a8b0; }
+        .cell.n8 { color: #a8b0b0; }
 
         /* ========== 高亮效果 ========== */
         .cell.highlight {
@@ -486,9 +470,7 @@
                 font-size: 22px;
                 margin-bottom: 14px;
             }
-            .controls {
-                gap: 8px;
-            }
+            .controls { gap: 8px; }
             .btn-glass {
                 padding: 6px 14px;
                 font-size: 12px;
@@ -511,43 +493,16 @@
                 border-radius: 8px;
                 font-size: 13px;
             }
-            .cell.flagged::after {
-                font-size: 16px;
-            }
-            .cell.question::after {
-                font-size: 15px;
-            }
-            .cell.mine-shown::after {
-                font-size: 15px;
-            }
-            .board {
-                gap: 2px;
-                padding: 4px;
-            }
-            .custom-panel {
-                padding: 10px 14px;
-                gap: 6px 12px;
-            }
-            .custom-panel label {
-                font-size: 12px;
-            }
-            .custom-panel input {
-                width: 44px;
-                padding: 4px 6px;
-                font-size: 12px;
-            }
-            .game-overlay .msg {
-                font-size: 20px;
-                padding: 12px 28px;
-            }
-            .game-overlay .btn-overlay {
-                font-size: 16px;
-                padding: 10px 24px;
-            }
-            .game-overlay .sub-info {
-                font-size: 15px;
-                padding: 4px 18px;
-            }
+            .cell.flagged::after { font-size: 16px; }
+            .cell.question::after { font-size: 15px; }
+            .cell.mine-shown::after { font-size: 15px; }
+            .board { gap: 2px; padding: 4px; }
+            .custom-panel { padding: 10px 14px; gap: 6px 12px; }
+            .custom-panel label { font-size: 12px; }
+            .custom-panel input { width: 44px; padding: 4px 6px; font-size: 12px; }
+            .game-overlay .msg { font-size: 20px; padding: 12px 28px; }
+            .game-overlay .btn-overlay { font-size: 16px; padding: 10px 24px; }
+            .game-overlay .sub-info { font-size: 15px; padding: 4px 18px; }
         }
 
         @media (max-width: 420px) {
@@ -555,41 +510,135 @@
                 padding: 14px 10px 20px;
                 border-radius: 24px;
             }
-            .btn-glass {
-                padding: 5px 10px;
-                font-size: 11px;
-            }
+            .btn-glass { padding: 5px 10px; font-size: 11px; }
             .cell {
                 border-radius: 6px;
                 font-size: 11px;
             }
-            .cell.flagged::after {
-                font-size: 13px;
+            .cell.flagged::after { font-size: 13px; }
+            .board { gap: 1.5px; padding: 3px; }
+            .info-item { font-size: 12px; padding: 3px 10px; }
+            .reset-btn { width: 34px; height: 34px; font-size: 16px; }
+            .game-overlay .msg { font-size: 16px; padding: 10px 20px; }
+            .game-overlay .btn-overlay { font-size: 14px; padding: 8px 18px; }
+            .game-overlay .sub-info { font-size: 13px; padding: 4px 14px; }
+        }
+
+        /* ========== 手机端操作菜单 ========== */
+        .mobile-menu {
+            position: fixed;
+            z-index: 999;
+            background: rgba(22, 22, 48, 0.96);
+            backdrop-filter: blur(20px) saturate(2);
+            -webkit-backdrop-filter: blur(20px) saturate(2);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 24px;
+            padding: 10px 8px;
+            display: flex;
+            gap: 6px;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            opacity: 0;
+            transform: scale(0.85) translateY(8px);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            pointer-events: none;
+            touch-action: manipulation;
+        }
+        .mobile-menu.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: auto;
+        }
+        .mobile-menu-btn {
+            width: 56px;
+            height: 64px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        .mobile-menu-btn .label {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .mobile-menu-btn:active {
+            background: rgba(255, 255, 255, 0.22);
+            transform: scale(0.9);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+        .mobile-menu-btn.flag-btn:active {
+            background: rgba(255, 215, 0, 0.2);
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+        .mobile-menu-btn.highlight-btn:active {
+            background: rgba(79, 172, 254, 0.2);
+            border-color: rgba(79, 172, 254, 0.3);
+        }
+        .mobile-menu-btn.question-btn:active {
+            background: rgba(255, 165, 0, 0.2);
+            border-color: rgba(255, 165, 0, 0.3);
+        }
+
+        /* 手机端菜单遮罩（用于点击外部关闭） */
+        .mobile-menu-backdrop {
+            position: fixed;
+            inset: 0;
+            z-index: 998;
+            background: transparent;
+            pointer-events: none;
+            touch-action: manipulation;
+        }
+        .mobile-menu-backdrop.active {
+            pointer-events: auto;
+        }
+
+        /* ========== 触摸设备禁用 hover 效果 ========== */
+        @media (hover: none) and (pointer: coarse) {
+            .cell:hover:not(.opened):not(.game-over):not(.paused) {
+                background: rgba(255, 255, 255, 0.08);
+                border-color: rgba(255, 255, 255, 0.06);
+                transform: none;
+                box-shadow:
+                    0 2px 8px rgba(0, 0, 0, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
             }
-            .board {
-                gap: 1.5px;
-                padding: 3px;
+            .cell:active:not(.opened):not(.game-over):not(.paused) {
+                transform: scale(0.94);
+                background: rgba(255, 255, 255, 0.16);
             }
-            .info-item {
-                font-size: 12px;
-                padding: 3px 10px;
+            .btn-glass:hover {
+                background: rgba(255, 255, 255, 0.06);
+                color: rgba(255, 255, 255, 0.75);
+                transform: none;
+                border-color: rgba(255, 255, 255, 0.08);
+                box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
             }
-            .reset-btn {
-                width: 34px;
-                height: 34px;
-                font-size: 16px;
+            .btn-glass:active {
+                background: rgba(255, 255, 255, 0.14);
+                transform: scale(0.96);
             }
-            .game-overlay .msg {
-                font-size: 16px;
-                padding: 10px 20px;
+            .reset-btn:hover {
+                background: rgba(255, 255, 255, 0.06);
+                transform: none;
+                border-color: rgba(255, 255, 255, 0.08);
             }
-            .game-overlay .btn-overlay {
-                font-size: 14px;
-                padding: 8px 18px;
-            }
-            .game-overlay .sub-info {
-                font-size: 13px;
-                padding: 4px 14px;
+            .game-overlay .btn-overlay:hover {
+                background: rgba(255, 255, 255, 0.12);
+                border-color: rgba(255, 255, 255, 0.15);
+                transform: scale(1);
             }
         }
 
@@ -602,38 +651,23 @@
 
         /* ========== 动画 ========== */
         @keyframes pop {
-            0% {
-                transform: scale(0.7);
-                opacity: 0.3;
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
+            0% { transform: scale(0.7); opacity: 0.3; }
+            100% { transform: scale(1); opacity: 1; }
         }
         .cell.pop {
             animation: pop 0.2s ease-out;
         }
 
         @keyframes glowPulse {
-            0%,
-            100% {
-                box-shadow: 0 0 20px rgba(79, 172, 254, 0.05);
-            }
-            50% {
-                box-shadow: 0 0 40px rgba(79, 172, 254, 0.15);
-            }
+            0%, 100% { box-shadow: 0 0 20px rgba(79, 172, 254, 0.05); }
+            50% { box-shadow: 0 0 40px rgba(79, 172, 254, 0.15); }
         }
         .board-wrapper {
             animation: glowPulse 4s ease-in-out infinite;
         }
 
-        ::-webkit-scrollbar {
-            width: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.15);
             border-radius: 10px;
@@ -690,10 +724,29 @@
         </div>
     </div>
 
+    <!-- 手机端操作菜单（动态创建） -->
+    <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-menu-btn flag-btn" data-action="flag">
+            🚩<span class="label">插旗</span>
+        </button>
+        <button class="mobile-menu-btn highlight-btn" data-action="highlight">
+            ✨<span class="label">高亮</span>
+        </button>
+        <button class="mobile-menu-btn question-btn" data-action="question">
+            ❓<span class="label">问号</span>
+        </button>
+    </div>
+
     <script>
         // ============================================================
         //  扫雷游戏 · 完整逻辑 (踩雷撤销, 每局3次机会)
         // ============================================================
+
+        // -------- 手机端检测 --------
+        const isTouchDevice = ('ontouchstart' in window) ||
+            (navigator.maxTouchPoints > 0) ||
+            (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
 
         // -------- 预设难度 --------
         const PRESETS = {
@@ -716,6 +769,8 @@
         const customCols = document.getElementById('customCols');
         const customMines = document.getElementById('customMines');
         const applyCustom = document.getElementById('applyCustom');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuBackdrop = document.getElementById('mobileMenuBackdrop');
 
         const diffBtns = document.querySelectorAll('[data-diff]');
 
@@ -725,8 +780,8 @@
             cols: 9,
             mines: 10,
             board: [],
-            gameOver: false, // true 表示游戏已终结（胜利或失败且无撤销）
-            paused: false, // 踩雷后暂停，等待用户操作
+            gameOver: false,
+            paused: false,
             firstClick: true,
             flagCount: 0,
             openedCount: 0,
@@ -735,10 +790,9 @@
             difficulty: 'easy',
             isCustom: false,
             currentConfig: null,
-            // 撤销相关
-            undoCount: 3, // 剩余撤销次数
+            undoCount: 3,
             maxUndo: 3,
-            lastState: null, // 存储 { board, flagCount, openedCount, firstClick, explodedRow, explodedCol }
+            lastState: null,
             explodedRow: -1,
             explodedCol: -1,
         };
@@ -746,6 +800,13 @@
         // 高亮相关
         let highlightedCells = [];
         let highlightSource = null;
+
+        // 手机端长按相关
+        let longPressTimer = null;
+        let touchStartPos = null;
+        let touchStartCell = null;
+        let longPressTriggered = false;
+        let mobileMenuTarget = null; // { row, col }
 
         // -------- 工具 --------
         function formatTime(sec) {
@@ -775,7 +836,7 @@
             state.flagCount = s.flagCount;
             state.openedCount = s.openedCount;
             state.firstClick = s.firstClick;
-            state.lastState = null; // 清空，避免重复撤销
+            state.lastState = null;
             return true;
         }
 
@@ -863,26 +924,205 @@
         function highlightNeighbors(row, col) {
             clearHighlight();
             const { rows, cols } = state;
-            const neighbors = [];
             for (let dr = -1; dr <= 1; dr++) {
                 for (let dc = -1; dc <= 1; dc++) {
                     if (dr === 0 && dc === 0) continue;
                     const nr = row + dr,
                         nc = col + dc;
                     if (nr >= 0 && nr < rows && nc >= 0 && nc < cols) {
-                        neighbors.push([nr, nc]);
+                        const el = boardEl.querySelector(`.cell[data-row="${nr}"][data-col="${nc}"]`);
+                        if (el) {
+                            el.classList.add('highlight');
+                            highlightedCells.push(el);
+                        }
                     }
                 }
             }
-            const cells = boardEl.querySelectorAll('.cell');
-            neighbors.forEach(([r, c]) => {
-                const el = boardEl.querySelector(`.cell[data-row="${r}"][data-col="${c}"]`);
-                if (el) {
-                    el.classList.add('highlight');
-                    highlightedCells.push(el);
-                }
-            });
             highlightSource = { row, col };
+        }
+
+        // ============================================================
+        //  手机端操作菜单
+        // ============================================================
+        function showMobileMenu(row, col, clientX, clientY) {
+            if (state.gameOver || state.paused) return;
+            const cell = state.board[row][col];
+            if (cell.opened) return; // 已打开的格子不显示菜单
+
+            mobileMenuTarget = { row, col };
+
+            // 计算菜单位置：优先显示在触摸点上方，空间不足则显示在下方
+            const menuW = mobileMenu.offsetWidth || 190;
+            const menuH = mobileMenu.offsetHeight || 80;
+            const padding = 12;
+
+            let left = clientX - menuW / 2;
+            let top = clientY - menuH - padding;
+
+            // 水平边界修正
+            if (left < padding) left = padding;
+            if (left + menuW > window.innerWidth - padding) left = window.innerWidth - menuW - padding;
+
+            // 垂直边界修正：上方空间不够就放下方
+            if (top < padding) {
+                top = clientY + padding;
+            }
+
+            mobileMenu.style.left = left + 'px';
+            mobileMenu.style.top = top + 'px';
+
+            // 短暂震动反馈（如果设备支持）
+            if (navigator.vibrate) {
+                navigator.vibrate(15);
+            }
+
+            mobileMenu.classList.add('show');
+            mobileMenuBackdrop.classList.add('active');
+        }
+
+        function hideMobileMenu() {
+            mobileMenu.classList.remove('show');
+            mobileMenuBackdrop.classList.remove('active');
+            mobileMenuTarget = null;
+            longPressTriggered = false;
+        }
+
+        function handleMobileMenuAction(action) {
+            if (!mobileMenuTarget) return;
+            const { row, col } = mobileMenuTarget;
+            const cell = state.board[row][col];
+            if (cell.opened) { hideMobileMenu(); return; }
+
+            switch (action) {
+                case 'flag':
+                    // 切换旗帜
+                    saveState();
+                    if (!cell.flagged && !cell.question) {
+                        cell.flagged = true;
+                        state.flagCount++;
+                    } else if (cell.flagged) {
+                        cell.flagged = false;
+                        cell.question = true;
+                        state.flagCount--;
+                    } else if (cell.question) {
+                        cell.question = false;
+                    }
+                    updateMineCounter();
+                    render();
+                    break;
+
+                case 'highlight':
+                    highlightNeighbors(row, col);
+                    break;
+
+                case 'question':
+                    // 直接设为问号
+                    saveState();
+                    if (cell.flagged) {
+                        cell.flagged = false;
+                        state.flagCount--;
+                    }
+                    if (cell.question) {
+                        cell.question = false;
+                    } else {
+                        cell.question = true;
+                    }
+                    updateMineCounter();
+                    render();
+                    break;
+            }
+            hideMobileMenu();
+        }
+
+        // -------- 手机端触摸事件处理 --------
+        function handleTouchStart(e) {
+            if (!isTouchDevice) return;
+            if (state.gameOver || state.paused) return;
+
+            const cellEl = e.target.closest('.cell');
+            if (!cellEl) { hideMobileMenu(); return; }
+
+            const row = parseInt(cellEl.dataset.row);
+            const col = parseInt(cellEl.dataset.col);
+            const touch = e.touches[0];
+
+            touchStartPos = { x: touch.clientX, y: touch.clientY };
+            touchStartCell = { row, col };
+            longPressTriggered = false;
+
+            // 启动长按计时器（500ms）
+            clearTimeout(longPressTimer);
+            longPressTimer = setTimeout(() => {
+                longPressTriggered = true;
+                // 摇晃反馈
+                if (navigator.vibrate) {
+                    navigator.vibrate([10, 30, 10]);
+                }
+                showMobileMenu(touchStartCell.row, touchStartCell.col, touchStartPos.x, touchStartPos.y);
+            }, 500);
+        }
+
+        function handleTouchMove(e) {
+            if (!isTouchDevice || !longPressTimer) return;
+
+            const touch = e.touches[0];
+            if (touchStartPos) {
+                const dx = Math.abs(touch.clientX - touchStartPos.x);
+                const dy = Math.abs(touch.clientY - touchStartPos.y);
+                // 移动超过阈值则取消长按
+                if (dx > 10 || dy > 10) {
+                    clearTimeout(longPressTimer);
+                    longPressTimer = null;
+                    touchStartCell = null;
+                }
+            }
+        }
+
+        function handleTouchEnd(e) {
+            if (!isTouchDevice) return;
+
+            // 清除长按计时器
+            if (longPressTimer) {
+                clearTimeout(longPressTimer);
+                longPressTimer = null;
+
+                // 短按 = 打开格子
+                if (!longPressTriggered && touchStartCell && !mobileMenu.classList.contains('show')) {
+                    const { row, col } = touchStartCell;
+                    const cell = state.board[row][col];
+                    if (!cell.opened && !cell.flagged && !cell.question) {
+                        // 轻触反馈
+                        if (navigator.vibrate) {
+                            navigator.vibrate(8);
+                        }
+                        openCell(row, col);
+                    }
+                }
+            }
+
+            if (!longPressTriggered && touchStartCell) {
+                // 短按结束后的清理
+                // 不做额外操作，openCell 已处理
+            }
+
+            // 不在这里清除 touchStartCell，可能在 touchend 后还有事件
+        }
+
+        function handleTouchCancel(e) {
+            clearTimeout(longPressTimer);
+            longPressTimer = null;
+            touchStartCell = null;
+            touchStartPos = null;
+            longPressTriggered = false;
+        }
+
+        // 全局触摸：点击棋盘外部关闭菜单
+        function handleGlobalTouchStart(e) {
+            if (!mobileMenu.classList.contains('show')) return;
+            // 检查触摸目标是否在菜单内
+            if (!mobileMenu.contains(e.target) && !e.target.closest('.cell')) {
+                hideMobileMenu();
+            }
         }
 
         // -------- 渲染棋盘 --------
@@ -947,7 +1187,6 @@
             const cell = board[row][col];
             if (cell.opened || cell.flagged || cell.question) return;
 
-            // 保存当前状态 (用于撤销)
             saveState();
 
             if (state.firstClick) {
@@ -957,20 +1196,16 @@
             }
 
             if (cell.mine) {
-                // 踩雷
                 cell.opened = true;
                 cell.exploded = true;
                 state.explodedRow = row;
                 state.explodedCol = col;
-                // 暂停并显示菜单
                 showExplosionMenu();
                 render();
                 return;
             }
 
-            const queue = [
-                [row, col]
-            ];
+            const queue = [[row, col]];
             const visited = new Set();
             visited.add(row + ',' + col);
 
@@ -1010,7 +1245,7 @@
             const cell = state.board[row][col];
             if (cell.opened) return;
 
-            saveState(); // 保存状态以便撤销标记（可选）
+            saveState();
 
             if (!cell.flagged && !cell.question) {
                 cell.flagged = true;
@@ -1026,60 +1261,7 @@
             render();
         }
 
-        // -------- 快速展开 (右键数字格) --------
-        function quickExpand(row, col) {
-            if (state.gameOver || state.paused) return;
-            const { board, rows, cols } = state;
-            const cell = board[row][col];
-            if (!cell.opened || cell.mine) return;
-            if (cell.neighborMines === 0) return;
-
-            // 保存状态 (因为可能触发多个open)
-            saveState();
-
-            let flagCount = 0;
-            for (let dr = -1; dr <= 1; dr++) {
-                for (let dc = -1; dc <= 1; dc++) {
-                    if (dr === 0 && dc === 0) continue;
-                    const nr = row + dr,
-                        nc = col + dc;
-                    if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
-                    if (board[nr][nc].flagged) flagCount++;
-                }
-            }
-
-            if (flagCount === cell.neighborMines) {
-                for (let dr = -1; dr <= 1; dr++) {
-                    for (let dc = -1; dc <= 1; dc++) {
-                        if (dr === 0 && dc === 0) continue;
-                        const nr = row + dr,
-                            nc = col + dc;
-                        if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
-                        const neighbor = board[nr][nc];
-                        if (!neighbor.opened && !neighbor.flagged) {
-                            // 直接调用openCell，但openCell会再次保存状态，导致状态覆盖，所以需要调整
-                            // 这里我们手动处理，避免重复保存
-                            // 简单做法：直接调用openCell，但openCell会saveState，会覆盖之前保存的状态，造成撤销只能回到这次批量展开前
-                            // 但我们希望撤销回到这次批量展开前，所以使用一个标志避免重复保存
-                            // 更简单：在openCell里检查是否已经保存过，但我们使用一个全局标志
-                            // 这里我们直接调用openCell，因为openCell内部有saveState，但会多次保存，最后一次保存是最后一次操作，但还原时会还原到批量展开前（因为最后一次保存是在第一次open前）
-                            // 实际上，由于我们saveState是在openCell最开始，所以多次调用openCell会导致多次保存，但最后保留的是最后一个openCell之前的状态，不是批量展开前。
-                            // 所以我们改为在quickExpand开头保存一次，然后内部调用一个不保存的open函数。
-                            // 重构：添加一个参数 skipSave，但为了简洁，我们使用一个全局标志。
-                            // 这里我们采用另一种方式：手动处理展开逻辑，不调用openCell。
-                            // 但为了代码简洁，我们重新设计一个内部函数 _openCellWithoutSave
-                        }
-                    }
-                }
-                // 由于上面没有调用openCell，我们需要手动执行展开逻辑
-                // 我们使用一个辅助函数
-                _expandNeighbors(row, col);
-                render();
-                checkWin();
-            }
-        }
-
-        // 内部展开函数（不保存状态，由quickExpand负责保存）
+        // -------- 内部展开函数（不保存状态，由quickExpand负责保存） --------
         function _expandNeighbors(row, col) {
             const { board, rows, cols } = state;
             const cell = board[row][col];
@@ -1106,7 +1288,6 @@
                         if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
                         const neighbor = board[nr][nc];
                         if (!neighbor.opened && !neighbor.flagged) {
-                            // 直接打开，但需要BFS，我们复用openCell的逻辑但去除保存
                             _openCellInternal(nr, nc);
                         }
                     }
@@ -1120,8 +1301,6 @@
             const cell = board[row][col];
             if (cell.opened || cell.flagged || cell.question) return;
 
-            // 不保存状态，由调用者负责
-
             if (cell.mine) {
                 cell.opened = true;
                 cell.exploded = true;
@@ -1132,9 +1311,7 @@
                 return;
             }
 
-            const queue = [
-                [row, col]
-            ];
+            const queue = [[row, col]];
             const visited = new Set();
             visited.add(row + ',' + col);
 
@@ -1165,23 +1342,19 @@
             }
         }
 
-        // 修改quickExpand调用
-        const originalQuickExpand = quickExpand;
-        quickExpand = function(row, col) {
+        // 外部调用 quickExpand
+        function quickExpand(row, col) {
             if (state.gameOver || state.paused) return;
             const { board } = state;
             const cell = board[row][col];
             if (!cell.opened || cell.mine) return;
             if (cell.neighborMines === 0) return;
 
-            saveState(); // 保存一次
+            saveState();
             _expandNeighbors(row, col);
             render();
             checkWin();
-        };
-
-        // 修改openCell，在踩雷后不调用gameOver，而是显示菜单
-        // 我们已经修改了openCell内部
+        }
 
         // -------- 检查胜利 --------
         function checkWin() {
@@ -1194,7 +1367,6 @@
                 }
             }
             if (opened === rows * cols - mines) {
-                // 胜利
                 state.gameOver = true;
                 stopTimer();
                 showWinMenu();
@@ -1205,22 +1377,19 @@
         function showExplosionMenu() {
             state.paused = true;
             stopTimer();
-            // 显示遮罩
+            hideMobileMenu();
             gameOverlay.classList.add('show');
             resultMsg.textContent = '💥 踩到地雷！';
             resultMsg.className = 'msg lose';
             subInfo.textContent = `剩余撤销次数：${state.undoCount}`;
 
-            // 生成按钮
             overlayButtons.innerHTML = '';
-            // 重新开始（重新开始）
+
             const btnRestart = document.createElement('button');
             btnRestart.className = 'btn-overlay primary';
             btnRestart.textContent = '重新开始';
             btnRestart.addEventListener('click', () => {
-                // 重置游戏
                 resetGame();
-                // 重置撤销次数
                 state.undoCount = state.maxUndo;
                 gameOverlay.classList.remove('show');
                 state.paused = false;
@@ -1228,7 +1397,6 @@
             });
             overlayButtons.appendChild(btnRestart);
 
-            // 撤销按钮
             const btnUndo = document.createElement('button');
             btnUndo.className = 'btn-overlay danger';
             btnUndo.textContent = '撤销 (剩余' + state.undoCount + '次)';
@@ -1237,30 +1405,23 @@
             }
             btnUndo.addEventListener('click', () => {
                 if (state.undoCount > 0 && state.lastState) {
-                    // 执行撤销
                     if (restoreState()) {
                         state.undoCount--;
                         state.paused = false;
                         gameOverlay.classList.remove('show');
-                        // 重新渲染
                         render();
-                        // 继续计时
                         startTimer();
-                        // 清除爆炸标记
-                        // 注意：恢复后，原来的爆炸格被重置为未打开状态
-                        // 需要清除 exploded 属性
-                        // 已在restoreState中覆盖board
                     }
                 }
             });
             overlayButtons.appendChild(btnUndo);
 
-            // 禁用所有格子
             document.querySelectorAll('.cell').forEach(el => el.classList.add('disabled', 'paused'));
         }
 
         // -------- 显示胜利菜单 --------
         function showWinMenu() {
+            hideMobileMenu();
             gameOverlay.classList.add('show');
             resultMsg.textContent = '🎉 恭喜你赢了！';
             resultMsg.className = 'msg win';
@@ -1302,6 +1463,7 @@
         function resetGame() {
             stopTimer();
             gameOverlay.classList.remove('show');
+            hideMobileMenu();
             state.gameOver = false;
             state.paused = false;
             state.firstClick = true;
@@ -1352,12 +1514,11 @@
                 btn.classList.toggle('active', btn.dataset.diff === diff);
             });
 
-            // 重置撤销次数
             state.undoCount = state.maxUndo;
             resetGame();
         }
 
-        // -------- 处理格子点击 --------
+        // -------- 处理格子点击（桌面端） --------
         function handleCellClick(e) {
             const cellEl = e.target.closest('.cell');
             if (!cellEl) return;
@@ -1406,6 +1567,45 @@
         // -------- 事件绑定 --------
         boardEl.addEventListener('mousedown', handleCellClick);
         boardEl.addEventListener('contextmenu', onContextMenu);
+
+        // 手机端触摸事件
+        if (isTouchDevice) {
+            boardEl.addEventListener('touchstart', handleTouchStart, { passive: false });
+            boardEl.addEventListener('touchmove', handleTouchMove, { passive: false });
+            boardEl.addEventListener('touchend', handleTouchEnd, { passive: false });
+            boardEl.addEventListener('touchcancel', handleTouchCancel);
+
+            // 点击棋盘外部关闭菜单
+            document.addEventListener('touchstart', handleGlobalTouchStart, { passive: true });
+
+            // 阻止双击缩放（在棋盘区域）
+            boardEl.addEventListener('dblclick', (e) => {
+                e.preventDefault();
+            });
+        }
+
+        // 手机菜单按钮点击
+        mobileMenu.querySelectorAll('.mobile-menu-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const action = btn.dataset.action;
+                if (action) handleMobileMenuAction(action);
+            });
+            // 触摸事件也需要绑定（避免 click 延迟）
+            btn.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const action = btn.dataset.action;
+                if (action) handleMobileMenuAction(action);
+            });
+        });
+
+        // 点击遮罩关闭菜单
+        mobileMenuBackdrop.addEventListener('click', hideMobileMenu);
+        mobileMenuBackdrop.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            hideMobileMenu();
+        });
 
         resetBtn.addEventListener('click', () => {
             resetGame();
@@ -1481,13 +1681,18 @@
         }
 
         const originalRender = render;
-        render = function() {
+        render = function () {
             originalRender();
             adjustCellSize();
         };
 
         render();
         console.log('✨ 扫雷 · 阮叉叉版 已启动！');
+        if (isTouchDevice) {
+            console.log('📱 检测到触摸设备，已启用手机端操作模式');
+            console.log('   👆 单击 = 翻开格子');
+            console.log('   👆👆 长按 = 打开操作菜单（插旗/高亮/问号）');
+        }
     </script>
 
 </body>
