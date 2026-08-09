@@ -11,6 +11,8 @@
             padding: 0;
             box-sizing: border-box;
             user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
         }
 
         body {
@@ -22,6 +24,7 @@
             background: radial-gradient(ellipse at 30% 20%, #1a1a2e, #16213e 50%, #0f0f1a);
             padding: 20px;
             margin: 0;
+            -webkit-touch-callout: none;
         }
 
         /* ========== 主容器 — 阮叉叉版 ========== */
@@ -592,6 +595,13 @@
             border-color: rgba(255, 165, 0, 0.3);
         }
 
+        /* 手机端菜单按钮 — 禁用态 */
+        .mobile-menu-btn.disabled {
+            opacity: 0.25;
+            pointer-events: none;
+            cursor: not-allowed;
+        }
+
         /* 手机端菜单遮罩（用于点击外部关闭） */
         .mobile-menu-backdrop {
             position: fixed;
@@ -642,6 +652,147 @@
             }
         }
 
+        /* ========== 帮助按钮 ========== */
+        .help-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            outline: none;
+            flex-shrink: 0;
+        }
+        .help-btn:hover {
+            background: rgba(255, 255, 255, 0.16);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: scale(1.08);
+        }
+        .help-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* ========== 帮助弹窗 ========== */
+        .help-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .help-overlay.show {
+            display: flex;
+        }
+        .help-modal {
+            background: rgba(22, 22, 48, 0.97);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            padding: 28px 24px 24px;
+            max-width: 420px;
+            width: 100%;
+            color: #fff;
+            box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+            transform: scale(0.9);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .help-overlay.show .help-modal {
+            transform: scale(1);
+        }
+        .help-modal h3 {
+            font-size: 20px;
+            margin-bottom: 18px;
+            text-align: center;
+            background: linear-gradient(135deg, #f093fb, #4facfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .help-modal .section {
+            margin-bottom: 14px;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+        .help-modal .section h4 {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.65);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.3px;
+        }
+        .help-modal .section p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            line-height: 1.7;
+            padding-left: 4px;
+        }
+        .help-modal .section p span {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+        .help-modal .close-btn {
+            display: block;
+            margin: 20px auto 0;
+            padding: 10px 36px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            outline: none;
+        }
+        .help-modal .close-btn:hover {
+            background: rgba(255, 255, 255, 0.16);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+        .help-modal .close-btn:active {
+            transform: scale(0.94);
+        }
+
+        /* 触摸设备下禁用帮助按钮 hover */
+        @media (hover: none) and (pointer: coarse) {
+            .help-btn:hover {
+                background: rgba(255, 255, 255, 0.06);
+                color: rgba(255, 255, 255, 0.7);
+                transform: none;
+                border-color: rgba(255, 255, 255, 0.15);
+            }
+            .help-btn:active {
+                background: rgba(255, 255, 255, 0.14);
+                transform: scale(0.92);
+            }
+            .help-modal .close-btn:hover {
+                background: rgba(255, 255, 255, 0.08);
+                border-color: rgba(255, 255, 255, 0.15);
+            }
+            .help-modal .close-btn:active {
+                background: rgba(255, 255, 255, 0.16);
+                transform: scale(0.94);
+            }
+        }
+
         /* ========== 禁用点击 ========== */
         .cell.disabled,
         .cell.paused {
@@ -688,6 +839,7 @@
                 <button class="btn-glass" data-diff="hard">高级</button>
                 <button class="btn-glass custom-toggle" data-diff="custom">⚙ 自定义</button>
             </div>
+            <button class="help-btn" id="helpBtn" title="操作说明">❓</button>
         </div>
 
         <!-- 自定义面板 -->
@@ -738,6 +890,26 @@
         </button>
     </div>
 
+    <!-- 帮助弹窗 -->
+    <div class="help-overlay" id="helpOverlay">
+        <div class="help-modal">
+            <h3>🎮 游戏操作说明</h3>
+            <div class="section">
+                <h4>🖥 电脑端</h4>
+                <p><span>鼠标左键</span> — 翻开格子<br><span>鼠标中键</span> — 高亮周围区域<br><span>鼠标右键</span> — 插旗 / 问号标记</p>
+            </div>
+            <div class="section">
+                <h4>📱 手机端</h4>
+                <p><span>单击</span> — 翻开格子<br><span>长按</span> — 打开操作菜单<br>　　　🚩 插旗 &nbsp; ✨ 高亮 &nbsp; ❓ 问号</p>
+            </div>
+            <div class="section">
+                <h4>💡 提示</h4>
+                <p>已翻开的数字格上，如果周围旗子数量等于数字，右键/中键可快速展开。<br>每局有 <span>3 次</span> 踩雷撤销机会。</p>
+            </div>
+            <button class="close-btn" id="helpCloseBtn">知道了</button>
+        </div>
+    </div>
+
     <script>
         // ============================================================
         //  扫雷游戏 · 完整逻辑 (踩雷撤销, 每局3次机会)
@@ -771,6 +943,8 @@
         const applyCustom = document.getElementById('applyCustom');
         const mobileMenu = document.getElementById('mobileMenu');
         const mobileMenuBackdrop = document.getElementById('mobileMenuBackdrop');
+        const helpBtn = document.getElementById('helpBtn');
+        const helpOverlay = document.getElementById('helpOverlay');
 
         const diffBtns = document.querySelectorAll('[data-diff]');
 
@@ -947,9 +1121,19 @@
         function showMobileMenu(row, col, clientX, clientY) {
             if (state.gameOver || state.paused) return;
             const cell = state.board[row][col];
-            if (cell.opened) return; // 已打开的格子不显示菜单
 
             mobileMenuTarget = { row, col };
+
+            // 已打开的格子：插旗和问号按钮置灰
+            const flagBtn = mobileMenu.querySelector('.flag-btn');
+            const questionBtn = mobileMenu.querySelector('.question-btn');
+            if (cell.opened) {
+                flagBtn.classList.add('disabled');
+                questionBtn.classList.add('disabled');
+            } else {
+                flagBtn.classList.remove('disabled');
+                questionBtn.classList.remove('disabled');
+            }
 
             // 计算菜单位置：优先显示在触摸点上方，空间不足则显示在下方
             const menuW = mobileMenu.offsetWidth || 190;
@@ -991,7 +1175,8 @@
             if (!mobileMenuTarget) return;
             const { row, col } = mobileMenuTarget;
             const cell = state.board[row][col];
-            if (cell.opened) { hideMobileMenu(); return; }
+            // 已打开的格子只允许高亮操作
+            if (cell.opened && action !== 'highlight') return;
 
             switch (action) {
                 case 'flag':
@@ -1012,7 +1197,12 @@
                     break;
 
                 case 'highlight':
-                    highlightNeighbors(row, col);
+                    // 如果已经高亮此格子，则取消高亮；否则高亮
+                    if (highlightSource && highlightSource.row === row && highlightSource.col === col) {
+                        clearHighlight();
+                    } else {
+                        highlightNeighbors(row, col);
+                    }
                     break;
 
                 case 'question':
@@ -1574,6 +1764,8 @@
             boardEl.addEventListener('touchmove', handleTouchMove, { passive: false });
             boardEl.addEventListener('touchend', handleTouchEnd, { passive: false });
             boardEl.addEventListener('touchcancel', handleTouchCancel);
+            // 禁止 iOS 长按弹出选择菜单
+            boardEl.addEventListener('contextmenu', (e) => e.preventDefault());
 
             // 点击棋盘外部关闭菜单
             document.addEventListener('touchstart', handleGlobalTouchStart, { passive: true });
@@ -1612,6 +1804,17 @@
             state.undoCount = state.maxUndo;
             gameOverlay.classList.remove('show');
             render();
+        });
+
+        // 帮助按钮
+        helpBtn.addEventListener('click', () => {
+            helpOverlay.classList.add('show');
+        });
+        document.getElementById('helpCloseBtn').addEventListener('click', () => {
+            helpOverlay.classList.remove('show');
+        });
+        helpOverlay.addEventListener('click', (e) => {
+            if (e.target === helpOverlay) helpOverlay.classList.remove('show');
         });
 
         diffBtns.forEach(btn => {
