@@ -594,10 +594,6 @@
             background: rgba(255, 165, 0, 0.2);
             border-color: rgba(255, 165, 0, 0.3);
         }
-        .mobile-menu-btn.expand-btn:active {
-            background: rgba(79, 172, 254, 0.2);
-            border-color: rgba(79, 172, 254, 0.3);
-        }
 
         /* 手机端菜单按钮 — 禁用态 */
         .mobile-menu-btn.disabled {
@@ -880,7 +876,7 @@
         </div>
     </div>
 
-    <!-- 手机端操作菜单（动态创建） -->
+    <!-- 手机端操作菜单 -->
     <div class="mobile-menu-backdrop" id="mobileMenuBackdrop"></div>
     <div class="mobile-menu" id="mobileMenu">
         <button class="mobile-menu-btn flag-btn" data-action="flag">
@@ -892,9 +888,6 @@
         <button class="mobile-menu-btn question-btn" data-action="question">
             ❓<span class="label">问号</span>
         </button>
-        <button class="mobile-menu-btn expand-btn" data-action="expand">
-            🔍<span class="label">展开</span>
-        </button>
     </div>
 
     <!-- 帮助弹窗 -->
@@ -903,15 +896,15 @@
             <h3>🎮 游戏操作说明</h3>
             <div class="section">
                 <h4>🖥 电脑端</h4>
-                <p><span>鼠标左键</span> — 翻开格子<br><span>鼠标右键</span> — 弹出操作菜单<br>　　　🚩 插旗 &nbsp; ✨ 高亮 &nbsp; ❓ 问号 &nbsp; 🔍 展开</p>
+                <p><span>鼠标左键</span> — 翻开格子；已翻开数字格上旗子数匹配则自动展开周围<br><span>鼠标右键</span> — 弹出操作菜单<br>　　　🚩 插旗/取消插旗 &nbsp; ✨ 高亮/取消高亮 &nbsp; ❓ 问号/取消问号</p>
             </div>
             <div class="section">
-                <h4>📱 手机端（苹果设备建议在QQ或微信打开）</h4>
-                <p><span>单击</span> — 翻开格子 / 数字格自动展开<br><span>长按</span> — 打开操作菜单<br>　　　🚩 插旗 &nbsp; ✨ 高亮 &nbsp; ❓ 问号 &nbsp; 🔍 展开</p>
+                <h4>📱 手机端</h4>
+                <p><span>单击</span> — 翻开格子；已翻开数字格上旗子数匹配则自动展开周围<br><span>长按</span> — 打开操作菜单<br>　　　🚩 插旗/取消插旗 &nbsp; ✨ 高亮/取消高亮 &nbsp; ❓ 问号/取消问号</p>
             </div>
             <div class="section">
                 <h4>💡 提示</h4>
-                <p>已翻开的数字格上，如果周围旗子数量等于数字，可通过菜单或单击展开周围格子。<br>每局有 <span>3 次</span> 踩雷撤销机会。</p>
+                <p>格子状态循环：空白 → 🚩插旗 → ❓问号 → 🚩插旗 → ❓问号 → …（在插旗和问号间切换）<br>右键/长按任意格子可对其周围进行高亮标记。<br>有高亮时点击任意格子会取消高亮。<br>每局有 <span>3 次</span> 踩雷撤销机会。</p>
             </div>
             <button class="close-btn" id="helpCloseBtn">知道了</button>
         </div>
@@ -1122,43 +1115,66 @@
             highlightSource = { row, col };
         }
 
+        // -------- 计算周围旗子数量 --------
+        function countFlagsAround(row, col) {
+            let cnt = 0;
+            for (let dr = -1; dr <= 1; dr++) {
+                for (let dc = -1; dc <= 1; dc++) {
+                    if (dr === 0 && dc === 0) continue;
+                    const nr = row + dr, nc = col + dc;
+                    if (nr >= 0 && nr < state.rows && nc >= 0 && nc < state.cols && state.board[nr][nc].flagged) cnt++;
+                }
+            }
+            return cnt;
+        }
+
         // ============================================================
-        //  手机端操作菜单
+        //  操作菜单
         // ============================================================
         function showMobileMenu(row, col, clientX, clientY) {
             if (state.gameOver || state.paused) return;
-            const cell = state.board[row][col];
 
             mobileMenuTarget = { row, col };
+            const cell = state.board[row][col];
 
-            // 已打开的格子：插旗和问号按钮置灰，展开按钮仅在数字格旗子匹配时可用
             const flagBtn = mobileMenu.querySelector('.flag-btn');
             const questionBtn = mobileMenu.querySelector('.question-btn');
-            const expandBtn = mobileMenu.querySelector('.expand-btn');
+            const highlightBtn = mobileMenu.querySelector('.highlight-btn');
+
+            // 动态更新按钮文案
+            const flagLabel = flagBtn.querySelector('.label');
+            const questionLabel = questionBtn.querySelector('.label');
+            const highlightLabel = highlightBtn.querySelector('.label');
+
+            // 插旗按钮：已插旗 → "取消插旗"
+            if (cell.flagged) {
+                flagLabel.textContent = '取消插旗';
+                flagBtn.classList.remove('disabled');
+            } else {
+                flagLabel.textContent = '插旗';
+                flagBtn.classList.remove('disabled');
+            }
+
+            // 问号按钮：已是问号 → "取消问号"
+            if (cell.question) {
+                questionLabel.textContent = '取消问号';
+                questionBtn.classList.remove('disabled');
+            } else {
+                questionLabel.textContent = '问号';
+                questionBtn.classList.remove('disabled');
+            }
+
+            // 高亮按钮：如果当前格子是高亮源 → "取消高亮"
+            if (highlightSource && highlightSource.row === row && highlightSource.col === col) {
+                highlightLabel.textContent = '取消高亮';
+            } else {
+                highlightLabel.textContent = '高亮';
+            }
+
+            // 已打开的格子：插旗和问号按钮置灰
             if (cell.opened) {
                 flagBtn.classList.add('disabled');
                 questionBtn.classList.add('disabled');
-                if (!cell.mine && cell.neighborMines > 0) {
-                    let flagCnt = 0;
-                    for (let dr = -1; dr <= 1; dr++) {
-                        for (let dc = -1; dc <= 1; dc++) {
-                            if (dr === 0 && dc === 0) continue;
-                            const nr = row + dr, nc = col + dc;
-                            if (nr >= 0 && nr < state.rows && nc >= 0 && nc < state.cols && state.board[nr][nc].flagged) flagCnt++;
-                        }
-                    }
-                    if (flagCnt === cell.neighborMines) {
-                        expandBtn.classList.remove('disabled');
-                    } else {
-                        expandBtn.classList.add('disabled');
-                    }
-                } else {
-                    expandBtn.classList.add('disabled');
-                }
-            } else {
-                flagBtn.classList.remove('disabled');
-                questionBtn.classList.remove('disabled');
-                expandBtn.classList.add('disabled');
             }
 
             // 计算菜单位置：优先显示在触摸点上方，空间不足则显示在下方
@@ -1201,22 +1217,25 @@
             if (!mobileMenuTarget) return;
             const { row, col } = mobileMenuTarget;
             const cell = state.board[row][col];
-            // 已打开的格子允许高亮和展开操作
-            if (cell.opened && action !== 'highlight' && action !== 'expand') return;
 
             switch (action) {
                 case 'flag':
-                    // 切换旗帜
+                    // 插旗：空白→插旗→问号→插旗→问号→…(在插旗和问号间循环)
                     saveState();
                     if (!cell.flagged && !cell.question) {
+                        // 空白 → 插旗
                         cell.flagged = true;
                         state.flagCount++;
                     } else if (cell.flagged) {
+                        // 插旗 → 问号
                         cell.flagged = false;
                         cell.question = true;
                         state.flagCount--;
                     } else if (cell.question) {
+                        // 问号 → 插旗（不再变为空白）
                         cell.question = false;
+                        cell.flagged = true;
+                        state.flagCount++;
                     }
                     updateMineCounter();
                     render();
@@ -1232,7 +1251,7 @@
                     break;
 
                 case 'question':
-                    // 直接设为问号
+                    // 问号切换
                     saveState();
                     if (cell.flagged) {
                         cell.flagged = false;
@@ -1245,10 +1264,6 @@
                     }
                     updateMineCounter();
                     render();
-                    break;
-
-                case 'expand':
-                    quickExpand(row, col);
                     break;
             }
             hideMobileMenu();
@@ -1264,6 +1279,13 @@
 
             const row = parseInt(cellEl.dataset.row);
             const col = parseInt(cellEl.dataset.col);
+
+            // 有高亮时，触摸任何格子先取消高亮
+            if (highlightedCells.length > 0) {
+                clearHighlight();
+                return;
+            }
+
             const touch = e.touches[0];
 
             touchStartPos = { x: touch.clientX, y: touch.clientY };
@@ -1310,17 +1332,16 @@
                 if (!longPressTriggered && touchStartCell && !mobileMenu.classList.contains('show')) {
                     const { row, col } = touchStartCell;
                     const cell = state.board[row][col];
+
+                    // 有高亮时，短按取消高亮
+                    if (highlightedCells.length > 0) {
+                        clearHighlight();
+                        return;
+                    }
+
                     if (cell.opened && !cell.mine && cell.neighborMines > 0) {
                         // 数字格：周围旗子匹配则自动展开
-                        let flagCnt = 0;
-                        for (let dr = -1; dr <= 1; dr++) {
-                            for (let dc = -1; dc <= 1; dc++) {
-                                if (dr === 0 && dc === 0) continue;
-                                const nr = row + dr, nc = col + dc;
-                                if (nr >= 0 && nr < state.rows && nc >= 0 && nc < state.cols && state.board[nr][nc].flagged) flagCnt++;
-                            }
-                        }
-                        if (flagCnt === cell.neighborMines) {
+                        if (countFlagsAround(row, col) === cell.neighborMines) {
                             if (navigator.vibrate) navigator.vibrate(8);
                             quickExpand(row, col);
                         }
@@ -1336,10 +1357,7 @@
 
             if (!longPressTriggered && touchStartCell) {
                 // 短按结束后的清理
-                // 不做额外操作，openCell 已处理
             }
-
-            // 不在这里清除 touchStartCell，可能在 touchend 后还有事件
         }
 
         function handleTouchCancel(e) {
@@ -1350,12 +1368,13 @@
             longPressTriggered = false;
         }
 
-        // 全局触摸：点击棋盘外部关闭菜单
+        // 全局触摸：点击棋盘外部关闭菜单并清除高亮
         function handleGlobalTouchStart(e) {
-            if (!mobileMenu.classList.contains('show')) return;
+            if (!mobileMenu.classList.contains('show') && highlightedCells.length === 0) return;
             // 检查触摸目标是否在菜单内
             if (!mobileMenu.contains(e.target) && !e.target.closest('.cell')) {
                 hideMobileMenu();
+                clearHighlight();
             }
         }
 
@@ -1404,6 +1423,7 @@
             }
 
             updateMineCounter();
+            // 注意：render 会重建 DOM，高亮引用失效，需清空
             highlightedCells = [];
             highlightSource = null;
         }
@@ -1473,28 +1493,6 @@
             render();
         }
 
-        // -------- 标记格子 (右键未翻开) --------
-        function toggleFlag(row, col) {
-            if (state.gameOver || state.paused) return;
-            const cell = state.board[row][col];
-            if (cell.opened) return;
-
-            saveState();
-
-            if (!cell.flagged && !cell.question) {
-                cell.flagged = true;
-                state.flagCount++;
-            } else if (cell.flagged) {
-                cell.flagged = false;
-                cell.question = true;
-                state.flagCount--;
-            } else if (cell.question) {
-                cell.question = false;
-            }
-            updateMineCounter();
-            render();
-        }
-
         // -------- 内部展开函数（不保存状态，由quickExpand负责保存） --------
         function _expandNeighbors(row, col) {
             const { board, rows, cols } = state;
@@ -1502,18 +1500,7 @@
             if (!cell.opened || cell.mine) return;
             if (cell.neighborMines === 0) return;
 
-            let flagCount = 0;
-            for (let dr = -1; dr <= 1; dr++) {
-                for (let dc = -1; dc <= 1; dc++) {
-                    if (dr === 0 && dc === 0) continue;
-                    const nr = row + dr,
-                        nc = col + dc;
-                    if (nr < 0 || nr >= rows || nc < 0 || nc >= cols) continue;
-                    if (board[nr][nc].flagged) flagCount++;
-                }
-            }
-
-            if (flagCount === cell.neighborMines) {
+            if (countFlagsAround(row, col) === cell.neighborMines) {
                 for (let dr = -1; dr <= 1; dr++) {
                     for (let dc = -1; dc <= 1; dc++) {
                         if (dr === 0 && dc === 0) continue;
@@ -1612,6 +1599,7 @@
             state.paused = true;
             stopTimer();
             hideMobileMenu();
+            clearHighlight();
             gameOverlay.classList.add('show');
             resultMsg.textContent = '💥 踩到地雷！';
             resultMsg.className = 'msg lose';
@@ -1656,6 +1644,7 @@
         // -------- 显示胜利菜单 --------
         function showWinMenu() {
             hideMobileMenu();
+            clearHighlight();
             gameOverlay.classList.add('show');
             resultMsg.textContent = '🎉 恭喜你赢了！';
             resultMsg.className = 'msg win';
@@ -1758,16 +1747,31 @@
             if (!cellEl) return;
             if (state.gameOver || state.paused) return;
 
-            // 仅处理左键，中键和右键功能已集中到右键弹窗
+            // 仅处理左键
             if (e.button !== 0) return;
 
             const row = parseInt(cellEl.dataset.row);
             const col = parseInt(cellEl.dataset.col);
             const cell = state.board[row][col];
 
-            if (cell.opened) return;
-            if (cell.flagged || cell.question) return;
-            openCell(row, col);
+            // 有高亮时，左键点击任意格子取消高亮，不打开任何格子
+            if (highlightedCells.length > 0) {
+                clearHighlight();
+                return;
+            }
+
+            // 已打开的数字格：旗子数匹配则自动展开周围
+            if (cell.opened && !cell.mine && cell.neighborMines > 0) {
+                if (countFlagsAround(row, col) === cell.neighborMines) {
+                    quickExpand(row, col);
+                }
+                return;
+            }
+
+            // 未打开的非旗非问号格子：翻开
+            if (!cell.opened && !cell.flagged && !cell.question) {
+                openCell(row, col);
+            }
         }
 
         // -------- 事件绑定 --------
@@ -1782,24 +1786,38 @@
             if (!cellEl) return;
             const row = parseInt(cellEl.dataset.row);
             const col = parseInt(cellEl.dataset.col);
+
+            // 有高亮时，右键取消高亮
+            if (highlightedCells.length > 0) {
+                clearHighlight();
+                return;
+            }
+
             showMobileMenu(row, col, e.clientX, e.clientY);
         });
 
-        // 全局禁止浏览器右键菜单（页面任意位置均不弹出浏览器功能页面）
+        // 全局禁止浏览器右键菜单
         document.addEventListener('contextmenu', (e) => {
             e.preventDefault();
         });
 
-        // 桌面端点击菜单外部关闭
+        // 桌面端点击菜单外部关闭 + 清除高亮
         document.addEventListener('click', (e) => {
             if (mobileMenu.classList.contains('show') && !mobileMenu.contains(e.target) && !e.target.closest('.cell')) {
                 hideMobileMenu();
             }
+            // 点击棋盘外部区域清除高亮
+            if (highlightedCells.length > 0 && !e.target.closest('.cell') && !e.target.closest('.mobile-menu')) {
+                clearHighlight();
+            }
         });
 
-        // ESC 键关闭菜单
+        // ESC 键关闭菜单 + 清除高亮
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') hideMobileMenu();
+            if (e.key === 'Escape') {
+                hideMobileMenu();
+                clearHighlight();
+            }
         });
 
         // 手机端触摸事件
@@ -1811,7 +1829,7 @@
             // 禁止 iOS 长按弹出选择菜单
             boardEl.addEventListener('contextmenu', (e) => e.preventDefault());
 
-            // 点击棋盘外部关闭菜单
+            // 点击棋盘外部关闭菜单 + 清除高亮
             document.addEventListener('touchstart', handleGlobalTouchStart, { passive: true });
 
             // 阻止双击缩放（在棋盘区域）
@@ -1932,11 +1950,11 @@
         if (isTouchDevice) {
             console.log('📱 检测到触摸设备，已启用手机端操作模式');
             console.log('   👆 单击 = 翻开格子 / 数字格自动展开');
-            console.log('   👆👆 长按 = 打开操作菜单（插旗/高亮/问号/展开）');
+            console.log('   👆👆 长按 = 打开操作菜单（插旗/高亮/问号）');
         } else {
             console.log('🖥 桌面端模式');
-            console.log('   🖱 左键 = 翻开格子');
-            console.log('   🖱 右键 = 弹出操作菜单（插旗/高亮/问号/展开）');
+            console.log('   🖱 左键 = 翻开格子 / 数字格旗子匹配自动展开');
+            console.log('   🖱 右键 = 弹出操作菜单（插旗/高亮/问号）');
         }
     </script>
 
