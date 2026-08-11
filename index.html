@@ -594,6 +594,10 @@
             background: rgba(255, 165, 0, 0.2);
             border-color: rgba(255, 165, 0, 0.3);
         }
+        .mobile-menu-btn.expand-btn:active {
+            background: rgba(79, 172, 254, 0.2);
+            border-color: rgba(79, 172, 254, 0.3);
+        }
 
         /* 手机端菜单按钮 — 禁用态 */
         .mobile-menu-btn.disabled {
@@ -888,6 +892,9 @@
         <button class="mobile-menu-btn question-btn" data-action="question">
             ❓<span class="label">问号</span>
         </button>
+        <button class="mobile-menu-btn expand-btn" data-action="expand">
+            🔍<span class="label">展开</span>
+        </button>
     </div>
 
     <!-- 帮助弹窗 -->
@@ -896,15 +903,15 @@
             <h3>🎮 游戏操作说明</h3>
             <div class="section">
                 <h4>🖥 电脑端</h4>
-                <p><span>鼠标左键</span> — 翻开格子<br><span>鼠标中键</span> — 高亮周围区域<br><span>鼠标右键</span> — 插旗 / 问号标记</p>
+                <p><span>鼠标左键</span> — 翻开格子<br><span>鼠标右键</span> — 弹出操作菜单<br>　　　🚩 插旗 &nbsp; ✨ 高亮 &nbsp; ❓ 问号 &nbsp; 🔍 展开</p>
             </div>
             <div class="section">
                 <h4>📱 手机端（苹果设备建议在QQ或微信打开）</h4>
-                <p><span>单击</span> — 翻开格子<br><span>长按</span> — 打开操作菜单<br>　　　🚩 插旗 &nbsp; ✨ 高亮 &nbsp; ❓ 问号</p>
+                <p><span>单击</span> — 翻开格子 / 数字格自动展开<br><span>长按</span> — 打开操作菜单<br>　　　🚩 插旗 &nbsp; ✨ 高亮 &nbsp; ❓ 问号 &nbsp; 🔍 展开</p>
             </div>
             <div class="section">
                 <h4>💡 提示</h4>
-                <p>已翻开的数字格上，如果周围旗子数量等于数字，右键/中键可快速展开。<br>每局有 <span>3 次</span> 踩雷撤销机会。</p>
+                <p>已翻开的数字格上，如果周围旗子数量等于数字，可通过菜单或单击展开周围格子。<br>每局有 <span>3 次</span> 踩雷撤销机会。</p>
             </div>
             <button class="close-btn" id="helpCloseBtn">知道了</button>
         </div>
@@ -1124,15 +1131,34 @@
 
             mobileMenuTarget = { row, col };
 
-            // 已打开的格子：插旗和问号按钮置灰
+            // 已打开的格子：插旗和问号按钮置灰，展开按钮仅在数字格旗子匹配时可用
             const flagBtn = mobileMenu.querySelector('.flag-btn');
             const questionBtn = mobileMenu.querySelector('.question-btn');
+            const expandBtn = mobileMenu.querySelector('.expand-btn');
             if (cell.opened) {
                 flagBtn.classList.add('disabled');
                 questionBtn.classList.add('disabled');
+                if (!cell.mine && cell.neighborMines > 0) {
+                    let flagCnt = 0;
+                    for (let dr = -1; dr <= 1; dr++) {
+                        for (let dc = -1; dc <= 1; dc++) {
+                            if (dr === 0 && dc === 0) continue;
+                            const nr = row + dr, nc = col + dc;
+                            if (nr >= 0 && nr < state.rows && nc >= 0 && nc < state.cols && state.board[nr][nc].flagged) flagCnt++;
+                        }
+                    }
+                    if (flagCnt === cell.neighborMines) {
+                        expandBtn.classList.remove('disabled');
+                    } else {
+                        expandBtn.classList.add('disabled');
+                    }
+                } else {
+                    expandBtn.classList.add('disabled');
+                }
             } else {
                 flagBtn.classList.remove('disabled');
                 questionBtn.classList.remove('disabled');
+                expandBtn.classList.add('disabled');
             }
 
             // 计算菜单位置：优先显示在触摸点上方，空间不足则显示在下方
@@ -1175,8 +1201,8 @@
             if (!mobileMenuTarget) return;
             const { row, col } = mobileMenuTarget;
             const cell = state.board[row][col];
-            // 已打开的格子只允许高亮操作
-            if (cell.opened && action !== 'highlight') return;
+            // 已打开的格子允许高亮和展开操作
+            if (cell.opened && action !== 'highlight' && action !== 'expand') return;
 
             switch (action) {
                 case 'flag':
@@ -1219,6 +1245,10 @@
                     }
                     updateMineCounter();
                     render();
+                    break;
+
+                case 'expand':
+                    quickExpand(row, col);
                     break;
             }
             hideMobileMenu();
@@ -1276,11 +1306,25 @@
                 clearTimeout(longPressTimer);
                 longPressTimer = null;
 
-                // 短按 = 打开格子
+                // 短按 = 打开格子 / 数字格自动展开
                 if (!longPressTriggered && touchStartCell && !mobileMenu.classList.contains('show')) {
                     const { row, col } = touchStartCell;
                     const cell = state.board[row][col];
-                    if (!cell.opened && !cell.flagged && !cell.question) {
+                    if (cell.opened && !cell.mine && cell.neighborMines > 0) {
+                        // 数字格：周围旗子匹配则自动展开
+                        let flagCnt = 0;
+                        for (let dr = -1; dr <= 1; dr++) {
+                            for (let dc = -1; dc <= 1; dc++) {
+                                if (dr === 0 && dc === 0) continue;
+                                const nr = row + dr, nc = col + dc;
+                                if (nr >= 0 && nr < state.rows && nc >= 0 && nc < state.cols && state.board[nr][nc].flagged) flagCnt++;
+                            }
+                        }
+                        if (flagCnt === cell.neighborMines) {
+                            if (navigator.vibrate) navigator.vibrate(8);
+                            quickExpand(row, col);
+                        }
+                    } else if (!cell.opened && !cell.flagged && !cell.question) {
                         // 轻触反馈
                         if (navigator.vibrate) {
                             navigator.vibrate(8);
@@ -1708,55 +1752,55 @@
             resetGame();
         }
 
-        // -------- 处理格子点击（桌面端） --------
+        // -------- 处理格子点击（桌面端左键） --------
         function handleCellClick(e) {
             const cellEl = e.target.closest('.cell');
             if (!cellEl) return;
             if (state.gameOver || state.paused) return;
 
+            // 仅处理左键，中键和右键功能已集中到右键弹窗
+            if (e.button !== 0) return;
+
             const row = parseInt(cellEl.dataset.row);
             const col = parseInt(cellEl.dataset.col);
             const cell = state.board[row][col];
 
-            // 左键
-            if (e.button === 0) {
-                if (cell.opened) return;
-                if (cell.flagged || cell.question) return;
-                openCell(row, col);
-                return;
-            }
-
-            // 右键
-            if (e.button === 2) {
-                e.preventDefault();
-                if (cell.opened && !cell.mine && cell.neighborMines > 0) {
-                    quickExpand(row, col);
-                } else if (!cell.opened) {
-                    toggleFlag(row, col);
-                }
-                return;
-            }
-
-            // 中键：切换高亮
-            if (e.button === 1) {
-                e.preventDefault();
-                if (highlightSource && highlightSource.row === row && highlightSource.col === col) {
-                    clearHighlight();
-                } else {
-                    highlightNeighbors(row, col);
-                }
-                return;
-            }
-        }
-
-        // -------- 阻止右键菜单 --------
-        function onContextMenu(e) {
-            e.preventDefault();
+            if (cell.opened) return;
+            if (cell.flagged || cell.question) return;
+            openCell(row, col);
         }
 
         // -------- 事件绑定 --------
         boardEl.addEventListener('mousedown', handleCellClick);
-        boardEl.addEventListener('contextmenu', onContextMenu);
+
+        // 桌面端右键弹出操作菜单
+        boardEl.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            hideMobileMenu();
+            if (state.gameOver || state.paused) return;
+            const cellEl = e.target.closest('.cell');
+            if (!cellEl) return;
+            const row = parseInt(cellEl.dataset.row);
+            const col = parseInt(cellEl.dataset.col);
+            showMobileMenu(row, col, e.clientX, e.clientY);
+        });
+
+        // 全局禁止浏览器右键菜单（页面任意位置均不弹出浏览器功能页面）
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+
+        // 桌面端点击菜单外部关闭
+        document.addEventListener('click', (e) => {
+            if (mobileMenu.classList.contains('show') && !mobileMenu.contains(e.target) && !e.target.closest('.cell')) {
+                hideMobileMenu();
+            }
+        });
+
+        // ESC 键关闭菜单
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') hideMobileMenu();
+        });
 
         // 手机端触摸事件
         if (isTouchDevice) {
@@ -1862,12 +1906,6 @@
 
         // 初始启动
         setDifficulty('easy');
-
-        // 防止浏览器中键滚动
-        document.addEventListener('mousedown', (e) => {
-            if (e.button === 1) e.preventDefault();
-        });
-
         // 自适应字号
         function adjustCellSize() {
             const cells = document.querySelectorAll('.cell');
@@ -1893,8 +1931,12 @@
         console.log('✨ 扫雷 · 阮叉叉版 已启动！');
         if (isTouchDevice) {
             console.log('📱 检测到触摸设备，已启用手机端操作模式');
-            console.log('   👆 单击 = 翻开格子');
-            console.log('   👆👆 长按 = 打开操作菜单（插旗/高亮/问号）');
+            console.log('   👆 单击 = 翻开格子 / 数字格自动展开');
+            console.log('   👆👆 长按 = 打开操作菜单（插旗/高亮/问号/展开）');
+        } else {
+            console.log('🖥 桌面端模式');
+            console.log('   🖱 左键 = 翻开格子');
+            console.log('   🖱 右键 = 弹出操作菜单（插旗/高亮/问号/展开）');
         }
     </script>
 
