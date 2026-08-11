@@ -1699,7 +1699,7 @@
             timerEl.textContent = formatTime(0);
             state.timerInterval = setInterval(() => {
                 state.timer++;
-                if (state.timer > 999) state.timer = 999;
+                if (state.timer > 9999) state.timer = 9999;
                 timerEl.textContent = formatTime(state.timer);
             }, 1000);
         }
@@ -1722,7 +1722,7 @@
             state.flagCount = 0;
             state.openedCount = 0;
             state.timer = 0;
-            timerEl.textContent = '000';
+            timerEl.textContent = '0000';
             resetBtn.textContent = '😊';
             state.undoCount = state.maxUndo;
             state.lastState = null;
