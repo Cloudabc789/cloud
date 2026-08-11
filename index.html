@@ -829,14 +829,14 @@
 
     <div class="glass-container">
         <!-- 标题 -->
-        <div class="title">✦ <span>扫雷</span></div>
+        <div class="title">✦ <span>扫雷</span> · 阮叉叉版</div>
 
         <!-- 控制栏 -->
         <div class="controls">
             <div class="difficulty-group">
-                <button class="btn-glass active" data-diff="easy">简单</button>
-                <button class="btn-glass" data-diff="medium">普通</button>
-                <button class="btn-glass" data-diff="hard">困难</button>
+                <button class="btn-glass active" data-diff="easy">初级</button>
+                <button class="btn-glass" data-diff="medium">中级</button>
+                <button class="btn-glass" data-diff="hard">高级</button>
                 <button class="btn-glass custom-toggle" data-diff="custom">⚙ 自定义</button>
             </div>
             <button class="help-btn" id="helpBtn" title="操作说明">❓</button>
@@ -893,18 +893,18 @@
     <!-- 帮助弹窗 -->
     <div class="help-overlay" id="helpOverlay">
         <div class="help-modal">
-            <h3>🎮 操作说明</h3>
+            <h3>🎮 游戏操作说明</h3>
             <div class="section">
                 <h4>🖥 电脑端</h4>
-                <p><span>鼠标左键</span> — 翻开格子；已翻开数字格上旗子数匹配则展开周围<br><span>鼠标右键</span> — 弹出操作菜单</p>
+                <p><span>鼠标左键</span> — 翻开格子；已翻开数字格上旗子数匹配则自动展开周围<br><span>鼠标右键</span> — 弹出操作菜单<br>　　　🚩 插旗/取消插旗 &nbsp; ✨ 高亮/取消高亮 &nbsp; ❓ 问号/取消问号</p>
             </div>
             <div class="section">
                 <h4>📱 手机端</h4>
-                <p><span>单击</span> — 翻开格子；已翻开数字格上旗子数匹配则展开周围<br><span>长按</span> — 打开操作菜单</p>
+                <p><span>单击</span> — 翻开格子；已翻开数字格上旗子数匹配则自动展开周围<br><span>长按</span> — 打开操作菜单<br>　　　🚩 插旗/取消插旗 &nbsp; ✨ 高亮/取消高亮 &nbsp; ❓ 问号/取消问号</p>
             </div>
             <div class="section">
                 <h4>💡 提示</h4>
-                <p>每局有 <span>3 次</span> 踩雷撤销机会。<br>    🚩 插旗(表示此地是雷) <br>    ✨ 高亮(显示数字影响的区域) <br>    ❓ 问号(怀疑此地是雷)<br>作者：阮叉叉</p>
+                <p>格子状态循环：空白 → 🚩插旗 → ❓问号 → 🚩插旗 → ❓问号 → …（在插旗和问号间切换）<br>右键/长按任意格子可对其周围进行高亮标记。<br>有高亮时点击任意格子会取消高亮。<br>每局有 <span>3 次</span> 踩雷撤销机会。</p>
             </div>
             <button class="close-btn" id="helpCloseBtn">知道了</button>
         </div>
@@ -922,9 +922,9 @@
 
         // -------- 预设难度 --------
         const PRESETS = {
-            easy: { rows: 10, cols: 10, mines: 10 },
-            medium: { rows: 10, cols: 10, mines: 20 },
-            hard: { rows: 10, cols: 10, mines: 50 },
+            easy: { rows: 9, cols: 9, mines: 10 },
+            medium: { rows: 16, cols: 16, mines: 40 },
+            hard: { rows: 16, cols: 30, mines: 99 },
         };
 
         // -------- DOM 引用 --------
@@ -1220,19 +1220,18 @@
 
             switch (action) {
                 case 'flag':
-                    // 插旗：空白→插旗→问号→插旗→问号→…(在插旗和问号间循环)
+                    // 插旗：空白→插旗，已插旗→取消为空白，问号→插旗
                     saveState();
                     if (!cell.flagged && !cell.question) {
                         // 空白 → 插旗
                         cell.flagged = true;
                         state.flagCount++;
                     } else if (cell.flagged) {
-                        // 插旗 → 问号
+                        // 取消插旗 → 空白
                         cell.flagged = false;
-                        cell.question = true;
                         state.flagCount--;
                     } else if (cell.question) {
-                        // 问号 → 插旗（不再变为空白）
+                        // 问号 → 插旗
                         cell.question = false;
                         cell.flagged = true;
                         state.flagCount++;
