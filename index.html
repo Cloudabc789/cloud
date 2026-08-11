@@ -175,17 +175,21 @@
         .info-item {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             color: rgba(255, 255, 255, 0.8);
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 500;
             letter-spacing: 0.5px;
             background: rgba(255, 255, 255, 0.04);
-            padding: 6px 18px;
+            padding: 6px 14px;
             border-radius: 30px;
             border: 1px solid rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
+        }
+        .info-group {
+            display: flex;
+            gap: 4px;
         }
         .info-item .icon {
             font-size: 20px;
@@ -484,8 +488,11 @@
                 gap: 8px;
             }
             .info-item {
-                font-size: 14px;
-                padding: 4px 12px;
+                font-size: 12px;
+                padding: 4px 10px;
+            }
+            .info-group {
+                gap: 3px;
             }
             .reset-btn {
                 width: 40px;
@@ -520,7 +527,8 @@
             }
             .cell.flagged::after { font-size: 13px; }
             .board { gap: 1.5px; padding: 3px; }
-            .info-item { font-size: 12px; padding: 3px 10px; }
+            .info-item { font-size: 11px; padding: 3px 8px; }
+            .info-group { gap: 2px; }
             .reset-btn { width: 34px; height: 34px; font-size: 16px; }
             .game-overlay .msg { font-size: 16px; padding: 10px 20px; }
             .game-overlay .btn-overlay { font-size: 14px; padding: 8px 18px; }
@@ -852,9 +860,15 @@
 
         <!-- 游戏信息 -->
         <div class="game-info">
-            <div class="info-item">
-                <span class="icon">💣</span>
-                <span class="value" id="mineCount">10</span>
+            <div class="info-group">
+                <div class="info-item">
+                    <span class="icon">⬜</span>
+                    <span class="value" id="unopenedCount">81</span>
+                </div>
+                <div class="info-item">
+                    <span class="icon">💣</span>
+                    <span class="value" id="mineCount">10</span>
+                </div>
             </div>
             <button class="reset-btn" id="resetBtn">😊</button>
             <div class="info-item">
@@ -896,15 +910,15 @@
             <h3>🎮 游戏操作说明</h3>
             <div class="section">
                 <h4>🖥 电脑端</h4>
-                <p><span>鼠标左键</span> — 翻开格子；已翻开数字格上旗子数匹配则自动展开周围<br><span>鼠标右键</span> — 弹出操作菜单<br>　　　🚩 插旗/取消插旗 &nbsp; ✨ 高亮/取消高亮 &nbsp; ❓ 问号/取消问号</p>
+                <p><span>鼠标左键</span> — 翻开格子；已翻开数字格上旗子数匹配则自动展开周围<br><span>鼠标右键</span> — 弹出操作菜单<br></p>
             </div>
             <div class="section">
                 <h4>📱 手机端</h4>
-                <p><span>单击</span> — 翻开格子；已翻开数字格上旗子数匹配则自动展开周围<br><span>长按</span> — 打开操作菜单<br>　　　🚩 插旗/取消插旗 &nbsp; ✨ 高亮/取消高亮 &nbsp; ❓ 问号/取消问号</p>
+                <p><span>单击</span> — 翻开格子；已翻开数字格上旗子数匹配则自动展开周围<br><span>长按</span> — 打开操作菜单<br>/p>
             </div>
             <div class="section">
                 <h4>💡 提示</h4>
-                <p>格子状态循环：空白 → 🚩插旗 → ❓问号 → 🚩插旗 → ❓问号 → …（在插旗和问号间切换）<br>右键/长按任意格子可对其周围进行高亮标记。<br>有高亮时点击任意格子会取消高亮。<br>每局有 <span>3 次</span> 踩雷撤销机会。</p>
+                <p>每局有 <span>3 次</span> 踩雷撤销机会。<br>   🚩 插旗/取消插旗 &nbsp; <br>   ✨ 高亮/取消高亮 &nbsp; <br>   ❓ 问号/取消问号</p>
             </div>
             <button class="close-btn" id="helpCloseBtn">知道了</button>
         </div>
@@ -930,6 +944,7 @@
         // -------- DOM 引用 --------
         const boardEl = document.getElementById('board');
         const mineCountEl = document.getElementById('mineCount');
+        const unopenedCountEl = document.getElementById('unopenedCount');
         const timerEl = document.getElementById('timerDisplay');
         const resetBtn = document.getElementById('resetBtn');
         const gameOverlay = document.getElementById('gameOverlay');
@@ -1427,10 +1442,12 @@
             highlightSource = null;
         }
 
-        // -------- 更新雷数 --------
+        // -------- 更新雷数 & 未打开格子 --------
         function updateMineCounter() {
             const remaining = state.mines - state.flagCount;
             mineCountEl.textContent = Math.max(0, remaining);
+            const unopened = state.rows * state.cols - state.openedCount;
+            unopenedCountEl.textContent = Math.max(0, unopened);
         }
 
         // -------- 打开格子 --------
